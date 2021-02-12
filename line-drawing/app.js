@@ -1,6 +1,6 @@
 let limit = 0;
 const log = a => limit++ < 100 ? console.log(a) : '';
-let circles = 10, radius = 10;
+let maxCircles = 100, radius = 10;
 const { sqrt, abs, floor, round } = Math;
 
 const mean_deviance = (a, b, c) => {
@@ -85,8 +85,15 @@ const getCircleCenters = function({ data, width, height }) {
 	}
 
 	let points = getPoints(data, height, width);
-	// console.log(points);
-	return points.map(p => convertIndexToCoordinate(p, width));
+	const newPoints = [];
+	
+	let skip = points.length / maxCircles;
+	if (skip < 1) skip = 1;
+	for (i = 0; i < points.length; i += skip) {
+		newPoints.push(points[floor(i)]);
+	}
+
+	return newPoints.map(p => convertIndexToCoordinate(p, width));
 }
 
 const oDiv = document.getElementById('overlay');
