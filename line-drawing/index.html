@@ -32,6 +32,22 @@
 				box-shadow: 5px 10px 10px rgba(0,0,0,0.5);
 				border-radius: 30px;
 			}
+			button {
+				background: #fff;
+				width: 400px;
+				padding: 10px;
+				margin-top: 20px;
+				font-size: 18px;
+				border-radius: 10px;
+				border: 2px solid #333;
+				color: #333;
+				cursor: pointer;
+				transition: 0.5s;
+			}
+			button:hover {
+				background: #333;
+				color: #fff;
+			}
 		</style>
 
 		<script>
@@ -63,8 +79,10 @@
 				if (file) {
 					const fr = new FileReader();
 					fr.onload = () => {
-						$(target_image).attr('src', fr.result);
-						processImageData(target_image);
+						let overlayDiv = document.getElementById('overlay');
+						overlayDiv.innerHTML = '';
+						let target_image = document.getElementById('main-image');
+						target_image.setAttribute('src', fr.result);
 					}
 					fr.readAsDataURL(file);
 				}
@@ -74,11 +92,13 @@
 			const startProcessImageData = image => {
 				setTimeout(() => processImageData(image), 500);
 			}
+			const selectFile = () => $("#file-upload").click();
 		</script>
 	</head>
 	<body>
 		<img onload="startProcessImageData(this)" src="./test.jpg" width="400" id="main-image" />
-<!-- 		<input type="file" onChange="setImage(event)" /> -->
+		<button onClick="selectFile()">Choose a line drawing image</button>
+		<input type="file" style="display:none" id="file-upload" onChange="setImage(event)" />
 		<div id="overlay"></div>
 
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>

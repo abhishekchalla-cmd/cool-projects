@@ -63,9 +63,8 @@ const getPoints = (data, height, width) => {
 }
 
 const getCircleCenters = function({ data, width, height }) {
-	width = 400;
-	height = 400;
 	let lightnessThreshold = 120;
+	let blackLightnessThreshold = 50;
 	let devianceThreshold = 10;
 
 	// TRAVERSING AS THE MATRIX
@@ -77,7 +76,7 @@ const getCircleCenters = function({ data, width, height }) {
 			let [r, g, b] = [data[start + 0], data[start + 1], data[start + 2]];
 			let lightness = (r + g + b) / 3;
 			let deviance = mean_deviance(r, g, b);
-			if (lightness < lightnessThreshold && deviance > devianceThreshold) paintPixel(data, start, [0, 0, 0]);
+			if ((lightness < lightnessThreshold && deviance > devianceThreshold) || lightness < blackLightnessThreshold) paintPixel(data, start, [0, 0, 0]);
 			else paintPixel(data, start, [255, 255, 255]);
 			j++;
 		}
