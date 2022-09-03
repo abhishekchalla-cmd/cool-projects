@@ -1,0 +1,30 @@
+:root {
+  --circle-fill: #bbb;
+  --circle-fill-green: rgb(25, 175, 73);
+  --circle-fill-red: rgb(215, 68, 41);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 100%;
+  background: var(--circle-fill);
+}
+
+.circle.green {
+  background: var(--circle-fill-green);
+}
+
+.circle.red {
+  background: var(--circle-fill-red);
+}

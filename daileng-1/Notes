@@ -1,0 +1,67 @@
+on each frame
+  - if the cursor object has collided with any objects
+    - determine every object's new vector
+    - determine future collision points for each object
+  - if any object has reached or moved past its future collision point
+    - determine that object's new vector
+    - determine future collision points for the collided objects only
+
+
+
+Point of collision between object 1 and object 2 =>
+
+Old:
+  line equation for object 1
+    => (y - y1) = m1 * (x - x1)
+    => y = m1 * x - m1 * x1 + y1
+  line equation for object 2
+    => y = m2 * x - m2 * x2 + y2
+  
+  m2 * x - m2 * x2 + y2 = m1 * x - m1 * x1 + y1
+  m2 * x - m1 * x = m2 * x2 - y2 - m1 * x1 + y1
+  x * (m2 - m1) = y1 - y2 - m1 * x1 + m2 * x2
+
+  collision x coordinate = (y1 - y2 - m1 * x1 + m2 * x2) / (m2 - m1)
+  collision y coordinate = m1 * (x - x1) + y1
+
+  if (velocity.x < 0 && x > position.x) reject coordinates
+  ```
+  if (futureCollisionPoint) {
+    // Check if object A is colliding with any other object sooner
+    let objACounterPart;
+    if (collisionPoints[objA.id]) {
+      const [coords, obj1, obj2] = collisionPoints[objA.id];
+      if (
+        Math.abs(objA.x - coords[0]) <
+        Math.abs(objA.x - futureCollisionPoint[0])
+      )
+        continue;
+      else objACounterPart = obj1 === objA ? obj2 : obj1;
+    }
+    // Check if object B is colliding with any other object sooner
+    let objBCounterPart;
+    if (collisionPoints[objB.id]) {
+      const [coords, obj1, obj2] = collisionPoints[objB.id];
+      if (
+        Math.abs(objB.x - coords[0]) <
+        Math.abs(objB.x - futureCollisionPoint[0])
+      )
+        continue;
+      else objBCounterPart = obj1 === objB ? obj2 : obj1;
+    }
+
+    if (objACounterPart) delete collisionPoints[objACounterPart.id];
+    if (objBCounterPart) delete collisionPoints[objBCounterPart.id];
+
+    collisionPoints[objA.id] = collisionPoints[objB.id] = [
+      [futureCollisionPoint.x, futureCollisionPoint.y],
+      objA,
+      objB,
+    ];
+  }
+  ```
+
+  New:
+  squared distance between centers of 2 cirlces = (yVb * t - yVa * t)^2 + (xVb * time - xVa * t)^2
+  d = t^2((yVb - yVa)^2 + (xVb - xVa)^2)
+  (rA + rB)^2 / ((yVb - yVb)^2 + (xVb - xVa)^2) = t^2
