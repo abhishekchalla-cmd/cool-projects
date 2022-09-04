@@ -10,7 +10,7 @@ module.exports = {
       circleRadius: 50,
       rows: 3,
       columns: 3,
-      spacing: 5,
+      spacing: 10,
     },
   },
 };

@@ -1,5 +1,6 @@
 :root {
-  --circle-fill: #bbb;
+  --circle-fill: rgba(187, 187, 187, 0.58);
+  --circle-fill-dark: rgba(170, 170, 170, 0.58);
   --circle-fill-green: rgb(25, 175, 73);
   --circle-fill-red: rgb(215, 68, 41);
 }
@@ -7,6 +8,7 @@
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 #root {
@@ -19,6 +21,18 @@ body {
   position: absolute;
   border-radius: 100%;
   background: var(--circle-fill);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: arial;
+  font-weight: 500;
+  font-size: 30px;
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.circle:nth-child(odd) {
+  background: var(--circle-fill-dark);
 }
 
 .circle.green {

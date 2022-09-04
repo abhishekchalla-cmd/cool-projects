@@ -30,11 +30,13 @@ const setup = (setupConfig, container) => {
     container.element.appendChild(element);
   }
 
-  circles[0].velocity = [50, 50];
-  circles[2].velocity = [-50, 50];
+  circles[0].velocity = [100, -100];
+  // circles[2].velocity = [-50, 50];
 
   // Insert reset button to DOM
-  resetButton.element.addEventListener("click", reset);
+  resetButton.element.addEventListener("click", () =>
+    reset({ circles, resetButton })
+  );
   container.element.appendChild(resetButton.element);
 
   return {

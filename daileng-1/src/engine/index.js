@@ -4,14 +4,18 @@ const {
   objectsMap,
   collisionObjects,
   collisionObjectsMap,
-  getCollisionTime,
-  setCollisionTime,
+  getNextCollisionTime,
+  setNextCollisionTime,
+  setNextCollisionPairs,
+  getNextCollisionPairs,
+  setContainer,
 } = require("./vars");
 const {
   hasCollided,
   handleObjectCollisions,
-  getNextCollisionTime,
+  getNextCollisions,
 } = require("./collision");
+const { getIsStopped, stopSim } = require("./controls");
 
 const worldConfig = {
   frictionCoefficient: 0,
@@ -22,7 +26,7 @@ const moveObj = (object) => {
   // Check collisions for cursor circle
   if (hasCollided(object)) {
     handleObjectCollisions(object);
-    getNextCollisionTime();
+    getNextCollisions();
   }
 };
 
@@ -61,16 +65,36 @@ let frameDuration = null;
 let getFrameDuration = () => frameDuration;
 
 const update = () => {
-  const thisFrameTime = new Date().getTime();
-  frameDuration = thisFrameTime - lastFrameTime;
-  lastFrameTime = thisFrameTime;
+  if (!getIsStopped()) {
+    const thisFrameTime = new Date().getTime();
+    frameDuration = thisFrameTime - lastFrameTime;
+    lastFrameTime = thisFrameTime;
 
-  // Check collisions for every object
-  for (const object of objects) object.update();
-  if (getCollisionTime() < new Date().getTime()) {
-    setCollisionTime(getNextCollisionTime());
-    console.log(getCollisionTime());
-  }
+    if (getNextCollisionTime() <= new Date().getTime()) {
+      // A collision happpened
+      const isFirstCollision = getNextCollisionTime() > 0;
+
+      if (isFirstCollision) {
+        // stopSim();
+      }
+
+      // Set new vectors
+      for (const pair of getNextCollisionPairs()) {
+        handleObjectCollisions(
+          collisionObjectsMap[pair[0]],
+          collisionObjectsMap[pair[1]]
+        );
+      }
+
+      // Calculate next collisions
+      const { time: nextCollisionTime, pairs: nextCollisionPairs } =
+        getNextCollisions();
+      setNextCollisionTime(nextCollisionTime);
+      setNextCollisionPairs(nextCollisionPairs);
+    }
+    for (const object of objects) object.update();
+  } else lastFrameTime = new Date().getTime();
+
   requestAnimationFrame(update);
 };
 
@@ -86,4 +110,5 @@ module.exports = {
   startSimulation,
 
   getFrameDuration,
+  setContainer,
 };

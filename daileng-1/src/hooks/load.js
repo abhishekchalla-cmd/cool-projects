@@ -3,6 +3,7 @@ const {
   registerCollisionObjects,
   registerObjects,
   startSimulation,
+  setContainer,
 } = require("../engine");
 const { createSetup } = require("../setups");
 const { rootDiv } = require("../utils/dom");
@@ -18,6 +19,8 @@ const load = () => {
     setupConfig,
     container
   );
+
+  setContainer(container);
   registerCollisionObjects(collisionObjects);
   registerObjects(staticObjects);
 

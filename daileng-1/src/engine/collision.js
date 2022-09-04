@@ -1,7 +1,8 @@
+const { stopSim } = require("./controls");
 const {
   getNewVectorsOnCollision,
   haveCollided,
-  getCollisionTimeSquared,
+  getCollisionTime,
 } = require("./math-helpers");
 const { collisionObjects } = require("./vars");
 
@@ -14,45 +15,49 @@ const hasCollided = (object) => {
 };
 
 // Handle collisions
-const handleObjectCollisions = (objA) => {
-  // Checking collisions with all objects
-  for (let j = 0; j < collisionObjects.length; j++) {
-    const objB = collisionObjects[j];
-    if (objA.id !== objB.id && haveCollided(objA, objB)) {
-      // objA and objB collided
-      const [objANewVectors, objBNewVectors] = getNewVectorsOnCollision(
-        objA,
-        objB
-      );
-      Object.assign(objA, objANewVectors);
-      Object.assign(objB, objBNewVectors);
-    }
+const handleObjectCollisions = (objA, objB) => {
+  if (objA.id !== objB.id && haveCollided(objA, objB)) {
+    // objA and objB collided
+    const [objANewVectors, objBNewVectors] = getNewVectorsOnCollision(
+      objA,
+      objB
+    );
+    Object.assign(objA, objANewVectors);
+    Object.assign(objB, objBNewVectors);
   }
 };
 
 // Identify when the next collision is going to happen
-const getNextCollisionTime = () => {
-  let leastTimeSquared = Infinity;
+const getNextCollisions = () => {
+  let leastTime = Infinity,
+    pairs = [];
 
   for (let i = 0; i < collisionObjects.length - 1; i++) {
     const objA = collisionObjects[i];
     for (let j = i + 1; j < collisionObjects.length; j++) {
       const objB = collisionObjects[j];
-      const collisionTimeSquared = getCollisionTimeSquared(objA, objB);
-      if (collisionTimeSquared < leastTimeSquared)
-        leastTimeSquared = collisionTimeSquared;
+      const collisionTime = getCollisionTime(objA, objB);
+      if (collisionTime < leastTime) {
+        leastTime = collisionTime;
+        pairs.splice(0, pairs.length);
+        pairs.push([objA.id, objB.id]);
+      } else if (collisionTime === leastTime && collisionTime !== Infinity) {
+        pairs.push([objA.id, objB.id]);
+      }
     }
   }
 
-  // console.log(leastTimeSquared);
-
-  return leastTimeSquared !== Infinity
-    ? new Date().getTime() + Math.sqrt(leastTimeSquared) * 1000
-    : Infinity;
+  return {
+    time:
+      leastTime !== Infinity
+        ? new Date().getTime() + Math.sqrt(leastTime) * 1000
+        : Infinity,
+    pairs,
+  };
 };
 
 module.exports = {
   hasCollided,
   handleObjectCollisions,
-  getNextCollisionTime,
+  getNextCollisions,
 };
